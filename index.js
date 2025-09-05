@@ -88,13 +88,13 @@ const createAxiosInstance = (proxyConfig) => {
 
     let proxyUrl;
 if (proxyConfig.auth) {
-  // username/password ကို encode လုပ်ထားပြီး @ မှား parse မဖြစ်စေ
-  const [username, password] = proxyConfig.auth.split(':');
-  proxyUrl = `http://${encodeURIComponent(username)}:${encodeURIComponent(password)}@${proxyConfig.host}:${proxyConfig.port}`;
+    const [username, password] = proxyConfig.auth.split(/-(.+)/); 
+    const encodedUsername = encodeURIComponent(username);
+    const encodedPassword = encodeURIComponent(password);
+    proxyUrl = `http://${encodedUsername}:${encodedPassword}@${proxyConfig.host}:${proxyConfig.port}`;
 } else {
-  proxyUrl = `http://${proxyConfig.host}:${proxyConfig.port}`;
+    proxyUrl = `http://${proxyConfig.host}:${proxyConfig.port}`;
 }
-
 
     const agent = new HttpsProxyAgent(proxyUrl);
     
