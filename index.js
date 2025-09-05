@@ -82,33 +82,31 @@ const getNextProxy = () => {
 
 const createAxiosInstance = (proxyConfig) => {
   try {
-    if (!proxyConfig) {
-      return axios.create({ timeout: 30000 });
+    if (!proxyConfig) return axios.create({ timeout: 30000 });
+
+    let proxyUrl;
+    if (proxyConfig.auth) {
+      const [username, password] = proxyConfig.auth.split(/-(.+)/);
+      const encodedUsername = encodeURIComponent(username);
+      const encodedPassword = encodeURIComponent(password);
+      proxyUrl = `http://${encodedUsername}:${encodedPassword}@${proxyConfig.host}:${proxyConfig.port}`;
+    } else {
+      proxyUrl = `http://${proxyConfig.host}:${proxyConfig.port}`;
     }
 
-if (proxyConfig.auth) {
-    // last '-' ဖြတ်ပြီး username/password ခွဲထုတ်
-    const lastDashIndex = proxyConfig.auth.lastIndexOf('-');
-    const username = encodeURIComponent(proxyConfig.auth.slice(0, lastDashIndex));
-    const password = encodeURIComponent(proxyConfig.auth.slice(lastDashIndex + 1));
-    proxyUrl = `http://${username}:${password}@${proxyConfig.host}:${proxyConfig.port}`;
-} else {
-    proxyUrl = `http://${proxyConfig.host}:${proxyConfig.port}`;
-}
+    const agent = new HttpsProxyAgent(proxyUrl);
 
-    const proxyUrl = `http://${encodeURIComponent(username)}:${encodeURIComponent(password)}@${host}:${port}`;
-const agent = new HttpsProxyAgent(proxyUrl);
-const axiosInstance = axios.create({
-  httpsAgent: agent,
-  proxy: false,
-  timeout: 30000
-});
-
+    return axios.create({
+      httpsAgent: agent,
+      timeout: 30000,
+      proxy: false
+    });
   } catch (error) {
-    logger.error(`Failed to create proxy agent: ${error.message}`);
+    console.error(`Failed to create proxy agent: ${error.message}`);
     return axios.create({ timeout: 30000 });
   }
 };
+
 
 const baseHeaders = {
   'Accept': 'application/json, text/plain, */*',
