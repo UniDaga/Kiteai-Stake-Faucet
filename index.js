@@ -54,8 +54,12 @@ const loadProxies = async () => {
         };
         
         if (parts.length >= 4) {
-          proxy.auth = `${parts[2]}:${parts[3]}`;
-        }
+  proxy.auth = {
+    username: parts[2],
+    password: parts[3]
+  };
+}
+
         
         return proxy;
       })
@@ -84,15 +88,15 @@ const createAxiosInstance = (proxyConfig) => {
   try {
     if (!proxyConfig) return axios.create({ timeout: 30000 });
 
-    let proxyUrl;
+   let proxyUrl;
 if (proxyConfig.auth) {
-  const username = proxyConfig.auth.username;
-  const password = proxyConfig.auth.password;
-  proxyUrl = `http://${encodeURIComponent(username)}:${encodeURIComponent(password)}@${proxyConfig.host}:${proxyConfig.port}`;
+  proxyUrl = `http://${encodeURIComponent(proxyConfig.auth.username)}:${encodeURIComponent(proxyConfig.auth.password)}@${proxyConfig.host}:${proxyConfig.port}`;
 } else {
   proxyUrl = `http://${proxyConfig.host}:${proxyConfig.port}`;
 }
 const agent = new HttpsProxyAgent(proxyUrl);
+
+
 
 
     return axios.create({
