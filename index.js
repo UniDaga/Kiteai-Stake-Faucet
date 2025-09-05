@@ -85,16 +85,15 @@ const createAxiosInstance = (proxyConfig) => {
     if (!proxyConfig) return axios.create({ timeout: 30000 });
 
     let proxyUrl;
-    if (proxyConfig.auth) {
-      const [username, password] = proxyConfig.auth.split(/-(.+)/);
-      const encodedUsername = encodeURIComponent(username);
-      const encodedPassword = encodeURIComponent(password);
-      proxyUrl = `http://${encodedUsername}:${encodedPassword}@${proxyConfig.host}:${proxyConfig.port}`;
-    } else {
-      proxyUrl = `http://${proxyConfig.host}:${proxyConfig.port}`;
-    }
+if (proxyConfig.auth) {
+  const username = proxyConfig.auth.username;
+  const password = proxyConfig.auth.password;
+  proxyUrl = `http://${encodeURIComponent(username)}:${encodeURIComponent(password)}@${proxyConfig.host}:${proxyConfig.port}`;
+} else {
+  proxyUrl = `http://${proxyConfig.host}:${proxyConfig.port}`;
+}
+const agent = new HttpsProxyAgent(proxyUrl);
 
-    const agent = new HttpsProxyAgent(proxyUrl);
 
     return axios.create({
       httpsAgent: agent,
