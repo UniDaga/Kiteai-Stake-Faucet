@@ -86,16 +86,15 @@ const createAxiosInstance = (proxyConfig) => {
       return axios.create({ timeout: 30000 });
     }
 
-let proxyUrl = `http://${encodeURIComponent(username)}:${encodeURIComponent(password)}@${host}:${port}`;
-let agent = new HttpsProxyAgent(proxyUrl);
-
-const axiosInstance = axios.create({
-  httpsAgent: agent,
-  proxy: false,
-  timeout: 30000
-});
-
-
+if (proxyConfig.auth) {
+    // last '-' ဖြတ်ပြီး username/password ခွဲထုတ်
+    const lastDashIndex = proxyConfig.auth.lastIndexOf('-');
+    const username = encodeURIComponent(proxyConfig.auth.slice(0, lastDashIndex));
+    const password = encodeURIComponent(proxyConfig.auth.slice(lastDashIndex + 1));
+    proxyUrl = `http://${username}:${password}@${proxyConfig.host}:${proxyConfig.port}`;
+} else {
+    proxyUrl = `http://${proxyConfig.host}:${proxyConfig.port}`;
+}
 
     const agent = new HttpsProxyAgent(proxyUrl);
     
