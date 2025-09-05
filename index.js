@@ -86,13 +86,15 @@ const createAxiosInstance = (proxyConfig) => {
       return axios.create({ timeout: 30000 });
     }
 
-const proxyUrl = `http://${encodeURIComponent(username)}:${encodeURIComponent(password)}@${proxyConfig.host}:${proxyConfig.port}`;
-const agent = new HttpsProxyAgent(proxyUrl);
+let proxyUrl = `http://${encodeURIComponent(username)}:${encodeURIComponent(password)}@${host}:${port}`;
+let agent = new HttpsProxyAgent(proxyUrl);
+
 const axiosInstance = axios.create({
   httpsAgent: agent,
   proxy: false,
   timeout: 30000
 });
+
 
 
     const agent = new HttpsProxyAgent(proxyUrl);
