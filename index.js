@@ -96,13 +96,14 @@ if (proxyConfig.auth) {
     proxyUrl = `http://${proxyConfig.host}:${proxyConfig.port}`;
 }
 
-    const agent = new HttpsProxyAgent(proxyUrl);
-    
-    return axios.create({
-      httpsAgent: agent,
-      timeout: 30000,
-      proxy: false
-    });
+    const proxyUrl = `http://${encodeURIComponent(username)}:${encodeURIComponent(password)}@${host}:${port}`;
+const agent = new HttpsProxyAgent(proxyUrl);
+const axiosInstance = axios.create({
+  httpsAgent: agent,
+  proxy: false,
+  timeout: 30000
+});
+
   } catch (error) {
     logger.error(`Failed to create proxy agent: ${error.message}`);
     return axios.create({ timeout: 30000 });
